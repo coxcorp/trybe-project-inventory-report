@@ -9,19 +9,16 @@ class Inventory:
     @staticmethod
     def import_data(path, report_type):
         with open(path) as report:
-            if "csv" in path:
+            if ".csv" in path:
                 report_results = csv.DictReader(report)
-            elif "json" in path:
+            elif ".json" in path:
                 report_results = json.load(report)
-            elif "xml" in path:
+            elif ".xml" in path:
                 report_results = xmltodict.parse(report.read())["dataset"][
                     "record"
                 ]
             results = list(report_results)
-            return Inventory.new_report(results, report_type)
-
-    def new_report(results, report_type):
-        if report_type == "simples":
-            return SimpleReport.generate(results)
-        else:
-            return CompleteReport.generate(results)
+            if report_type == "simples":
+                return SimpleReport.generate(results)
+            else:
+                return CompleteReport.generate(results)
