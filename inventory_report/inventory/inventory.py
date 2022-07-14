@@ -1,4 +1,5 @@
 import csv
+import json
 from inventory_report.reports.simple_report import SimpleReport
 from inventory_report.reports.complete_report import CompleteReport
 
@@ -6,11 +7,16 @@ from inventory_report.reports.complete_report import CompleteReport
 class Inventory:
     @staticmethod
     def import_data(path, report_type):
-        if "csv" in path:
-            with open(path) as report:
+        with open(path) as report:
+            if "csv" in path:
                 report_results = csv.DictReader(report)
-                results = list(report_results)
-            if report_type == "simples":
-                return SimpleReport.generate(results)
-            else:
-                return CompleteReport.generate(results)
+            elif "json" in path:
+                report_results = json.load(report)
+            results = list(report_results)
+            return Inventory.new_report(results, report_type)
+
+    def new_report(results, report_type):
+        if report_type == "simples":
+            return SimpleReport.generate(results)
+        else:
+            return CompleteReport.generate(results)
